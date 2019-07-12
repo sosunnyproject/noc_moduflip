@@ -15,10 +15,9 @@ function draw() {
   let center = createVector(width/2,height/2);
   mouse.sub(center);
 
-  let m = mouse.mag();
-  fill(255);
-  stroke(0);
-  rect(0,0,m,10);
+  // 1.6 normalization
+  mouse.normalize(); // 마우스 까지의 벡터를 정규화
+  mouse.mult(150); // 마우스 유닛 벡터 사이즈 (1) * 150
 
   translate(width/2,height/2);
   strokeWeight(2);
