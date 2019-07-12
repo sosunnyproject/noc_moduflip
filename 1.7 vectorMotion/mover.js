@@ -7,11 +7,15 @@ class Mover {
   constructor(){
     this.position = createVector(width/2, height/2);
     this.velocity = createVector(0, 0);
-    this.acceleration = createVector(-0.001, 0.01)
+    this.acceleration = createVector();
+    this.topspeed = 5;
   }
 
   update() {
+    this.acceleration = p5.Vector.random2D(); // random vector is normalized one
+    // this.acceleration.mult(2);
     this.velocity.add(this.acceleration);
+    this.velocity.limit(this.topspeed);
     this.position.add(this.velocity);
   }
 
