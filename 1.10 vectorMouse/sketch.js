@@ -13,6 +13,6 @@ function draw() {
   background(51);
 
   mover.update();
-  mover.checkEdges();
+  // mover.checkEdges();
   mover.display();
 }
