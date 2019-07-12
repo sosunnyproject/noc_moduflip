@@ -12,10 +12,10 @@ class Mover {
   }
 
   update() {
-    var mouse = createVector(mouseX, mouseY);
-    var dir = p5.Vector.sub(mouse, this.position);
+    let mouse = createVector(mouseX, mouseY);
+    let dir = p5.Vector.sub(mouse, this.position);
     dir.normalize();
-    dir.mult(10);
+    dir.mult(2);
     this.acceleration = dir;
     // this.acceleration.setMag(0.2);
 
