@@ -1,4 +1,4 @@
-// NOC_6_02_Arrive
+// NOC_6_04_flowfield
 
 // The Nature of Code
 // Daniel Shiffman
@@ -7,13 +7,37 @@
 // The "Vehicle" class
 
 class Vehicle {
-  constructor(x, y) {
-    this.acceleration = createVector(0, 0);
-    this.velocity = createVector(3, 4);
+  constructor(x, y, ms, mf) {
     this.position = createVector(x, y);
-    this.r = 6;
-    this.maxspeed = 3;
-    this.maxforce = 0.15;
+    this.acceleration = createVector(0, 0);
+    this.velocity = createVector(0, 0);
+    this.r = 4;
+    this.maxspeed = ms || 4;
+    this.maxforce = mf || 0.1;
+  }
+
+  run() {
+    this.update();
+    this.borders();
+    this.display();
+  }
+
+  // Implementing Reynolds' flow field following algorithm
+  // http://www.red3d.com/cwr/steer/FlowFollow.html
+  follow(flow) {
+    // What is the vector at that spot in the flow field?
+    let desired = flow.lookup(this.position);
+    // Scale it up by maxspeed
+    desired.mult(this.maxspeed);
+    // Steering is desired minus velocity
+    let steer = p5.Vector.sub(desired, this.velocity);
+    steer.limit(this.maxforce); // Limit to maximum steering force
+    this.applyForce(steer);
+  }
+
+  applyForce(force) {
+    // We could add mass here if we want A = F / M
+    this.acceleration.add(force);
   }
 
   // Method to update location
@@ -27,34 +51,12 @@ class Vehicle {
     this.acceleration.mult(0);
   }
 
-  applyForce(force) {
-    // We could add mass here if we want A = F / M
-    this.acceleration.add(force);
-  }
-
-  boundaries() {
-
-    let desired = null;
-
-    if (this.position.x < d) {
-      desired = createVector(this.maxspeed, this.velocity.y);
-    } else if (this.position.x > width - d) {
-      desired = createVector(-this.maxspeed, this.velocity.y);
-    }
-
-    if (this.position.y < d) {
-      desired = createVector(this.velocity.x, this.maxspeed);
-    } else if (this.position.y > height - d) {
-      desired = createVector(this.velocity.x, -this.maxspeed);
-    }
-
-    if (desired !== null) {
-      desired.normalize();
-      desired.mult(this.maxspeed);
-      let steer = p5.Vector.sub(desired, this.velocity);
-      steer.limit(this.maxforce);
-      this.applyForce(steer);
-    }
+  // Wraparound
+  borders() {
+    if (this.position.x < -this.r) this.position.x = width + this.r;
+    if (this.position.y < -this.r) this.position.y = height + this.r;
+    if (this.position.x > width + this.r) this.position.x = -this.r;
+    if (this.position.y > height + this.r) this.position.y = -this.r;
   }
 
   display() {
