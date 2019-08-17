@@ -1,4 +1,4 @@
-// NOC_6_01_Seek
+// NOC_6_02_Arrive
 
 // The Nature of Code
 // Daniel Shiffman
@@ -12,8 +12,8 @@ class Vehicle {
     this.velocity = createVector(0, -2);
     this.position = createVector(x, y);
     this.r = 6;
-    this.maxspeed = 8;
-    this.maxforce = 0.2;
+    this.maxspeed = 4;
+    this.maxforce = 0.1;
   }
 
   // Method to update location
@@ -34,17 +34,20 @@ class Vehicle {
 
   // A method that calculates a steering force towards a target
   // STEER = DESIRED MINUS VELOCITY
-  seek(target) {
+  arrive(target) {
+    let desired = p5.Vector.sub(target, this.position); // A vector pointing from the location to the target
+    let d = desired.mag();
+    // Scale with arbitrary damping within 100 pixels
+    if (d < 100) {
+      var m = map(d, 0, 100, 0, this.maxspeed);
+      desired.setMag(m);
+    } else {
+      desired.setMag(this.maxspeed);
+    }
 
-    var desired = p5.Vector.sub(target, this.position); // A vector pointing from the location to the target
-
-    // Scale to maximum speed
-    desired.setMag(this.maxspeed);
-
-    // Steering = Desired minus velocity
-    var steer = p5.Vector.sub(desired, this.velocity);
-    steer.limit(this.maxforce); // Limit to maximum steering force
-
+    // Steering = Desired minus Velocity
+    let steer = p5.Vector.sub(desired, this.velocity);
+    steer.limit(this.maxforce);  // Limit to maximum steering force
     this.applyForce(steer);
   }
 
