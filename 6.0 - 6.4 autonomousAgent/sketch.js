@@ -1,16 +1,17 @@
-// NOC_6_02_Arrive
+// NOC_6_03_stay within wall
 
 // The Nature of Code
 // Daniel Shiffman
 // http://natureofcode.com
 
-// Arriving "vehicle" follows the mouse position
-
-// Implements Craig Reynold's autonomous steering behaviors
-// One vehicle "arrive"
-// See: http://www.red3d.com/cwr/
+// Stay Within Walls
+// "Made-up" Steering behavior to stay within walls
 
 let v;
+
+let debug = true;
+
+let d = 25;
 
 function setup() {
   createCanvas(640, 360);
@@ -20,16 +21,21 @@ function setup() {
 function draw() {
   background(51);
 
-  let mouse = createVector(mouseX, mouseY);
-
-  // Draw an ellipse at the mouse position
-  fill(127);
-  stroke(200);
-  strokeWeight(2);
-  ellipse(mouse.x, mouse.y, 48, 48);
+  if (debug) {
+    stroke(175);
+    noFill();
+    rectMode(CENTER);
+    rect(width / 2, height / 2, width - d * 2, height - d * 2);
+  }
 
   // Call the appropriate steering behaviors for our agents
-  v.arrive(mouse);
+  v.boundaries();
+
   v.update();
   v.display();
+
+}
+
+function mousePressed() {
+  debug = !debug;
 }

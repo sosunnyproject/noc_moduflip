@@ -9,11 +9,11 @@
 class Vehicle {
   constructor(x, y) {
     this.acceleration = createVector(0, 0);
-    this.velocity = createVector(0, -2);
+    this.velocity = createVector(3, 4);
     this.position = createVector(x, y);
     this.r = 6;
-    this.maxspeed = 4;
-    this.maxforce = 0.1;
+    this.maxspeed = 3;
+    this.maxforce = 0.15;
   }
 
   // Method to update location
@@ -32,23 +32,29 @@ class Vehicle {
     this.acceleration.add(force);
   }
 
-  // A method that calculates a steering force towards a target
-  // STEER = DESIRED MINUS VELOCITY
-  arrive(target) {
-    let desired = p5.Vector.sub(target, this.position); // A vector pointing from the location to the target
-    let d = desired.mag();
-    // Scale with arbitrary damping within 100 pixels
-    if (d < 100) {
-      var m = map(d, 0, 100, 0, this.maxspeed);
-      desired.setMag(m);
-    } else {
-      desired.setMag(this.maxspeed);
+  boundaries() {
+
+    let desired = null;
+
+    if (this.position.x < d) {
+      desired = createVector(this.maxspeed, this.velocity.y);
+    } else if (this.position.x > width - d) {
+      desired = createVector(-this.maxspeed, this.velocity.y);
     }
 
-    // Steering = Desired minus Velocity
-    let steer = p5.Vector.sub(desired, this.velocity);
-    steer.limit(this.maxforce);  // Limit to maximum steering force
-    this.applyForce(steer);
+    if (this.position.y < d) {
+      desired = createVector(this.velocity.x, this.maxspeed);
+    } else if (this.position.y > height - d) {
+      desired = createVector(this.velocity.x, -this.maxspeed);
+    }
+
+    if (desired !== null) {
+      desired.normalize();
+      desired.mult(this.maxspeed);
+      let steer = p5.Vector.sub(desired, this.velocity);
+      steer.limit(this.maxforce);
+      this.applyForce(steer);
+    }
   }
 
   display() {
